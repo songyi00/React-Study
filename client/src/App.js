@@ -21,34 +21,22 @@ const styles = theme => ({
   }
 })
 
-const customers = [
-{
-  'id': 1,
-  'image': 'https://placeimg.com/64/64/1',
-  'name' : '김송이',
-  'birthday' : '000423',
-  'gender' : '여자',
-  'job' : '대학생'
-},
-{
-  'id': 2,
-  'image': 'https://placeimg.com/64/64/2',
-  'name' : '홍길동',
-  'birthday' : '990123',
-  'gender' : '남자',
-  'job' : '프로그래머'
-},
-{
-  'id': 3,
-  'image': 'https://placeimg.com/64/64/3',
-  'name' : '아무개',
-  'birthday' : '000803',
-  'gender' : '여자',
-  'job' : '디자이너'
-}
-]
-
 class App extends Component {
+  //props는 변경될 수 없는 데이터를 명시할 때, state는 변경될 수 있는 데이터를 명시할 때 사용  
+  state = {
+    customers: ""
+  }
+  componentDidMount() {
+    this.callApi() // body -> res 
+      .then(res => this.setState({customers : res}))
+  }
+
+  callApi = async () => {
+    const response = await fetch('/api/customers');
+    const body = await response.json(); //위의 경로(서버)에서 값을 가져와서 json 형태로 바꿔준다. 
+    return body;
+  }
+
   render(){
     const { classes } = this.props;
     return(
@@ -66,12 +54,11 @@ class App extends Component {
           </TableHead>
           <TableBody>
           { 
-            customers.map(c => {
+            this.state.customers ? this.state.customers.map(c => {
               return (
                 <Customer key = {c.id} id = {c.id} image = {c.image} name = {c.name} birthday = {c.birthday} gender = {c.gender} job = {c.job} />
-              )
-            })
-          }
+              ) 
+            }) : ""}
           </TableBody>
         </Table>
       </Paper>
