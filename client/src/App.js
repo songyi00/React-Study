@@ -8,7 +8,18 @@ import TableHead from '@material-ui/core/TableHead';
 import TableBody from '@material-ui/core/TableBody';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell'; 
+import CircularProgress from '@material-ui/core/CircularProgress';
 import { withStyles } from '@material-ui/core/styles';
+
+/*
+ 리액트 컴포넌트 실행 순서 (life cycle)
+ 1) constructor()
+ 2) componentWillMount()
+ 3) render() 
+ 4) componentDidMount()
+
+ props or state 변경? => shouleComponentUpdate() 
+*/
 
 const styles = theme => ({
   root: {
@@ -18,17 +29,23 @@ const styles = theme => ({
   },
   table: {
     minWidth: 1080 //테이블 가로 크기를 화면 크기와 상관없이 1080으로 고정시킴 
+  },
+  progress : {
+    margin : theme.spacing.unit * 2 
   }
 })
 
 class App extends Component {
   //props는 변경될 수 없는 데이터를 명시할 때, state는 변경될 수 있는 데이터를 명시할 때 사용  
   state = {
-    customers: ""
+    customers: "",
+    completed : 0
   }
   componentDidMount() {
+    this.timer = setInterval(this.progress, 20); //0.02초마다 progress 함수 실행 
     this.callApi() // body -> res 
       .then(res => this.setState({customers : res}))
+      .catch(err => console.log(err));
   }
 
   callApi = async () => {
@@ -37,6 +54,10 @@ class App extends Component {
     return body;
   }
 
+  progress = () => {
+    const { completed } = this.state;
+    this.setState({completed: completed >=100 ? 0 : completed + 1});
+  }
   render(){
     const { classes } = this.props;
     return(
@@ -53,12 +74,12 @@ class App extends Component {
             </TableRow>
           </TableHead>
           <TableBody>
-          { 
-            this.state.customers ? this.state.customers.map(c => {
-              return (
-                <Customer key = {c.id} id = {c.id} image = {c.image} name = {c.name} birthday = {c.birthday} gender = {c.gender} job = {c.job} />
-              ) 
-            }) : ""}
+          { this.state.customers ? this.state.customers.map(c => {
+              return (<Customer key = {c.id} id = {c.id} image = {c.image} name = {c.name} birthday = {c.birthday} gender = {c.gender} job = {c.job} />)
+                }) : <TableRow><TableCell colSpan="6" align="center">
+                    <CircularProgress className={classes.progress} variant="determinate" value={this.state.completed}/>
+                    </TableCell>
+                  </TableRow>}
           </TableBody>
         </Table>
       </Paper>
