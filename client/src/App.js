@@ -53,7 +53,7 @@ class App extends Component {
     const body = await response.json(); //위의 경로(서버)에서 값을 가져와서 json 형태로 바꿔준다. 
     return body;
   }
-
+  //로딩화면 구현 
   progress = () => {
     const { completed } = this.state;
     this.setState({completed: completed >=100 ? 0 : completed + 1});
