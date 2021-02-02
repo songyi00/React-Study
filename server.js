@@ -20,7 +20,7 @@ const connection = mysql.createConnection({
 });
 
 connection.connect();
-
+// 고객 데이터 조회 
 app.get('/api/customers',(req,res) => {
     connection.query(
         "select * from customer;",
