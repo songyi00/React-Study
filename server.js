@@ -20,6 +20,10 @@ const connection = mysql.createConnection({
 });
 
 connection.connect();
+
+const multer = require('multer');
+const upload = multer({dest : './upload'});
+
 // 고객 데이터 조회 
 app.get('/api/customers',(req,res) => {
     connection.query(
@@ -30,4 +34,23 @@ app.get('/api/customers',(req,res) => {
     );
 });
 
+app.use('/image',express.static('./upload')); //클라이언트의 image 루트가 우리에게는 upload 폴더 
+console.log('안녕 서버?');
+app.post('/api/customers',upload.single('image'), (req,res)=> {
+    let sql = 'INSERT INTO CUSTOMER VALUES (null,?,?,?,?,?)';
+    let image = '/image/'+req.file.filename;
+    let name = req.body.name;
+    let birthday = req.body.birthday;
+    let gender = req.body.gender
+    let job = req.body.job;
+    let params = [image,name,birthday,gender,job];
+   
+    connection.query(sql,params,
+        (err,rows,fields) => {
+            res.send(rows);
+            console.log(err);
+            console.log(rows);
+        }      
+    );
+});
 app.listen(port,()=> console.log(`Listening on port ${port}`));
