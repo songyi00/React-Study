@@ -1,3 +1,10 @@
-.yellow-background{
-  background: lightyellow;
+.addDiv{
+  border : 1px black solid;
+  padding: 20px;
+  background-color: lemonchiffon;
+  text-align: center;
+}
+#file{
+  position: absolute;
+  left: 5px;
 }

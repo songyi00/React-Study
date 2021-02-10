@@ -37,10 +37,25 @@ const styles = theme => ({
 
 class App extends Component {
   //props는 변경될 수 없는 데이터를 명시할 때, state는 변경될 수 있는 데이터를 명시할 때 사용  
-  state = {
-    customers: "",
-    completed : 0
+  
+  constructor(props) {
+    super(props);
+    this.state = {
+      customers: '',
+      completed: 0
+    }
   }
+  
+  stateRefresh = () => {
+    this.setState({
+      customers: '',
+      completed: 0
+    });
+    this.callApi()
+        .then(res => this.setState({customers : res}))
+        .catch(err => console.log(err));
+  }
+
   componentDidMount() {
     this.timer = setInterval(this.progress, 20); //0.02초마다 progress 함수 실행 
     this.callApi() // body -> res 
@@ -84,10 +99,11 @@ class App extends Component {
           </TableBody>
         </Table>
       </Paper>
-      <CustomerAdd />
+      <CustomerAdd stateRefresh={this.stateRefresh}/> 
       </div>
     );
   }
 }
-
+// CustomerAdd에 함수 자체(stateRefresh)를 props형태로 넘김 
+ 
 export default withStyles(styles)(App);
